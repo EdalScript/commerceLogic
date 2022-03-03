@@ -7,8 +7,7 @@ class Product {
   final double price;
 
   String get displayName => '($initial)${name.substring(1)}: \€$price';
-  String get initial =>
-      name.substring(0, 1); //I'd be getting the first letter of the item
+  String get initial => name.substring(0, 1);
 }
 
 class Item {
@@ -17,10 +16,36 @@ class Item {
   final int quantity;
 
   double get price => quantity * product.price;
+
+  @override
+  String toString() => '$quantity x ${product.name}: \€$price';
 }
 
 class Cart {
-  //
+  final Map<int, Item> _items = {};
+
+  void addProduct(Product product) {
+    final item = _items[product.id];
+    if (item == null) {
+      _items[product.id] = Item(product: product, quantity: 1);
+    } else {
+      _items[product.id] = Item(product: product, quantity: item.quantity + 1);
+    }
+  }
+
+  double total() => _items.values
+      .map((item) => item.price)
+      .reduce((value, element) => value + element);
+
+  @override
+  String toString() {
+    if (_items.isEmpty) {
+      return 'Cart is empty!';
+    }
+    final itemizedList =
+        _items.values.map((item) => item.toString()).join('\n');
+    return '$itemizedList\nTotal: \${total()}';
+  }
 }
 
 const allProducts = [
@@ -38,6 +63,7 @@ const allProducts = [
 ];
 
 void main() {
+  final cart = Cart();
   while (true) {
     stdout.write(
         'What would you like to do? (v)iew items, (a)dd items, (c)heckout: ');
@@ -45,7 +71,8 @@ void main() {
     if (line == 'v') {
       final product = chooseProduct();
       if (product != null) {
-        print(product.displayName);
+        cart.addProduct(product);
+        print(cart);
       }
     } else if (line == 'a') {
       //
