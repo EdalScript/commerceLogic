@@ -90,7 +90,7 @@ Product? chooseProduct() {
   final productsList =
       allProducts.map((product) => product.displayName).join('\n');
 
-  stdout.write('Available products:\n$productsList\nYour choice: ');
+  stdout.write('Available products:\n$productsList\nWhat would you like to purchase?: ');
   final line = stdin.readLineSync();
   for (var product in allProducts) {
     if (product.initial == line) {
